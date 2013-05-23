@@ -25,16 +25,28 @@ namespace CanalizaedBelt
             trackBar1.Visible = false;
             trackBar2.Visible = false;
             checkBox1.Visible = true;
+            checkBox2.Visible = true;
             PauseButt.Visible = true;
             BasicRadio.Enabled = false;
             MixedRadio.Enabled = false;
             SlowRadio.Enabled = false;
+            int test = getRadioButtonPosition();
 
-            if (rbc)
-                f = new Field(pictureBox1.Width, pictureBox1.Height, trackBar1.Value, trackBar2.Value);
+            f = new Field(pictureBox1.Width, pictureBox1.Height, trackBar1.Value, trackBar2.Value,getRadioButtonPosition());
 
             pictureBox1.Refresh();
             timer1.Start();
+        }
+
+        private int getRadioButtonPosition()
+        {
+            if (BasicRadio.Checked)
+                return 0;
+            if (MixedRadio.Checked)
+                return 1;
+            if (SlowRadio.Checked)
+                return 2;
+            return -1;
         }
 
         private void ClearButton_Click(object sender, EventArgs e)
@@ -44,6 +56,7 @@ namespace CanalizaedBelt
             trackBar1.Visible = true;
             trackBar2.Visible = true;
             checkBox1.Visible = false;
+            checkBox2.Visible = false;
             PauseButt.Visible = false;
             BasicRadio.Enabled = true;
             MixedRadio.Enabled = true;
@@ -58,8 +71,9 @@ namespace CanalizaedBelt
 
         private void trackBar1_Scroll(object sender, EventArgs e)
         {
-            trackBar2.Maximum = pictureBox1.Height / trackBar1.Value;
+            trackBar2.Maximum = (pictureBox1.Height / trackBar1.Value)*4;
             trackBar2.Value = trackBar2.Maximum / 2;
+            
             particleLabel.Text = Convert.ToString(trackBar2.Value);
             String res = String.Concat(Convert.ToString(pictureBox1.Width / trackBar1.Value), " x ",
                                        Convert.ToString(pictureBox1.Height / trackBar1.Value));
@@ -120,10 +134,10 @@ namespace CanalizaedBelt
                 e.Graphics.DrawLine(Pens.LightGray, 0, j * grid_step, pictureBox1.Width, j * grid_step);
             }
 
+            //отрисовка границ третей
             Brush b = new SolidBrush(Color.Fuchsia);
             Pen p = new Pen(b, 7);
-            e.Graphics.DrawLine(p, ((kX / 3) - 1) * grid_step, 0, ((kX / 3) - 1) * grid_step, pictureBox1.Height);
-            e.Graphics.DrawLine(p, ((kX / 3) * 2 + 1) * grid_step, 0, ((kX / 3) * 2 + 1) * grid_step, pictureBox1.Height);
+            e.Graphics.DrawLine(p, (kX / 2) * grid_step, 0, (kX / 2) * grid_step, pictureBox1.Height);
 
             if (f != null) f.Draw(e.Graphics);
         }
@@ -134,8 +148,9 @@ namespace CanalizaedBelt
             {
                 rbc = true;
                 f = null;
-                trackBar2.Maximum = pictureBox1.Height / trackBar1.Value;
+                trackBar2.Maximum = (pictureBox1.Height / trackBar1.Value)*4;
                 trackBar2.Value = trackBar2.Maximum / 2;
+                particleLabel.Text = trackBar2.Value.ToString();
             }
             else
             {
@@ -144,7 +159,14 @@ namespace CanalizaedBelt
                 //trackBar1.Maximum = 40;
                 //trackBar1.Value = 20;
             }
-            particleLabel.Text = trackBar1.Value.ToString();
+        }
+
+        private void checkBox2_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkBox2.Checked)
+                timer1.Interval = 10;
+            else
+                timer1.Interval = 100;
         }
     }
 }

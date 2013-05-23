@@ -16,20 +16,23 @@ namespace CanalizaedBelt
         public Paricle(int height, float _p = 2)
         {
             var rand = new Random();
+            
             if (_p == 2)
             {
-                do
-                {
-                    p = (float)(rand).NextDouble();
-                } while (p < 0.35);
+                type = rand.Next(2);
+                if (type == 0)
+                    p = 0.3f;
+                else
+                    p = 0.6f;
             }
             else
             {
+                type = 0;
                 p = _p;
             }
-            type = rand.Next(2);
-            X = rand.Next(5);
-            Y = rand.Next(height / 3) + height / 3;
+            
+            X = rand.Next(20);
+            Y = rand.Next(height-2) + 1;
             isCnt1 = isCnt2 = false;
         }
 

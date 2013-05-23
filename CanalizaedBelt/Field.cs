@@ -14,9 +14,12 @@ namespace CanalizaedBelt
         int kY;
         int amnt;
         int[,] wall;
-        public int countC1, countL1, countT1, countC2, countL2, countT2;
+        Random rand = new Random();
+        
+        int task = -1;  //0 - однотипные частицы; 1 - смешанные частицы; 2 - смешанные с обгоном; -1 - ошибка
+        //public int countC1, countL1, countT1, countC2, countL2, countT2;
 
-        public Field(int _w, int _h, int _g, int _amnt)
+        public Field(int _w, int _h, int _g, int _amnt, int _task)
         {
             grid_step = _g;
             kX = _w / _g;
@@ -24,7 +27,13 @@ namespace CanalizaedBelt
             amnt = _amnt;
             Paricle = new List<Paricle>();
             wall = new int[kX, kY];
-            countC1 = countL1 = countT1 = countC2 = countL2 = countT2 = 0;
+            task = _task;
+            float per;
+            if (task == 0)
+                per = 0.3f;
+            else
+                per = 2;
+            //countC1 = countL1 = countT1 = countC2 = countL2 = countT2 = 0;
 
 
             for (var i = 0; i < amnt; ++i)
@@ -33,7 +42,7 @@ namespace CanalizaedBelt
                 bool f;
                 do
                 {
-                    part = new Paricle(kY);
+                    part = new Paricle(kY,per);
 
                     f = Paricle.Any(p => p.X == part.X && p.Y == part.Y);
                 } while (f);
@@ -51,63 +60,57 @@ namespace CanalizaedBelt
         private Point NextPos(Paricle p)
         {
             var v = new Point(p.X, p.Y);
+            
             var oldV = new Point(p.X, p.Y);
             if (p.Go())
             {
-                var rand = new Random((int)DateTime.Now.Ticks);
-                var m = (float)rand.NextDouble();
-                if (0.2 >= m)
+                if (task == 2 && p.type == 1)
                 {
-                    if (p.type == 0)
-                        v.Y += 1;
-                    else
-                        v.Y -= 1;
+                    if(rand.NextDouble()>=0.75)
+                        v.Y = v.Y + Convert.ToInt32(Math.Pow(-1, rand.Next(1, 3)));
                 }
                 if (feelWall(v))
                     v.Y = oldV.Y;
-                if (v.Y == oldV.Y)
-                    v.X += 1;
+                v.X += 1;
             }
-            if (feelWall(v))
-                v.X -= 1;
+            if (feelEnd(v))
+                v.X = 0;
 
-            if (v.X == kX / 3 && !p.isCnt1)
-            {
-                countC1++;
-                p.isCnt1 = true;
-            }
-
-            if ((v.X == (kX / 3) * 2 + 2) && !p.isCnt2)
-            {
-                if (v.Y < kY / 2)
-                    countC2++;
-                else
-                    countL2++;
-                p.isCnt2 = true;
-            }
             return v;
         }
 
         private bool feelWall(Point parts)
         {                   //true при попадании в стену
-            if (wall[(int)parts.X, (int)parts.Y] == 1)
+            try
+            {
+                if (wall[(int)parts.X, (int)parts.Y] == 1)
+                    return true;
+                return false;
+            }
+            catch (Exception e)
+            {
+                return false;
+            }
+        }
+
+        private bool feelEnd(Point parts)
+        {
+            if (parts.X == kX)
                 return true;
             return false;
-
         }
         public void Move()
         {
-            countL1 = countC1;
-            countT1 += countC1;
-            countC1 = 0;
+            //countL1 = countC1;
+            //countT1 += countC1;
+            //countC1 = 0;
 
 
-            countT2 = countC2 + countL2;
+            //countT2 = countC2 + countL2;
 
             foreach (var t in Paricle)
             {
                 Point v = NextPos(t);
-                if (v.X == kX) v.X = kX - 1;
                 if (v.Y == -1)
                     v.Y = 0;
                 else if (v.Y == kY)
@@ -124,7 +127,11 @@ namespace CanalizaedBelt
         {
             foreach (var p in Paricle)
             {
-                Brush b = new SolidBrush(Color.Blue);
+                Brush b;
+                if(p.type == 0)
+                    b = new SolidBrush(Color.Blue);
+                else
+                    b = new SolidBrush(Color.Red);
                 g.FillEllipse(b, p.X * grid_step + 2, p.Y * grid_step + 2, grid_step - 5, grid_step - 5);
 
             }
