@@ -13,7 +13,6 @@ namespace CanalizaedBelt
     public partial class Form1 : Form
     {
         private Field f;
-        private bool rbc;
 
         public Form1()
         {
@@ -30,12 +29,14 @@ namespace CanalizaedBelt
             BasicRadio.Enabled = false;
             MixedRadio.Enabled = false;
             SlowRadio.Enabled = false;
+            PauseButt.Text = "Пауза";
+            prepareStatisticField();
             int test = getRadioButtonPosition();
 
             f = new Field(pictureBox1.Width, pictureBox1.Height, trackBar1.Value, trackBar2.Value,getRadioButtonPosition());
 
             pictureBox1.Refresh();
-            timer1.Start();
+            timer1.Start();            
         }
 
         private int getRadioButtonPosition()
@@ -89,32 +90,13 @@ namespace CanalizaedBelt
         private void timer1_Tick(object sender, EventArgs e)
         {
             pictureBox1.Refresh();
-            if (checkBox1.Checked)
+            f.Move();
+            if(f.getTicker()==19)
             {
-                this.Height = 695;
-                timer1.Interval = 300;
-            }
-            else
-            {
-                //this.Height = 580;
-                //timer1.Interval = 50;
-            }
-            if (rbc)
-            {
-                f.Move();
-                if (checkBox1.Checked)
-                {
-                    //textCur1.Text = Convert.ToString(f.countC1);
-                    //textCur2.Text = Convert.ToString(f.countC2);
-                    //textLast1.Text = Convert.ToString(f.countL1);
-                    //textLast2.Text = Convert.ToString(f.countL2);
-                    //textTotal1.Text = Convert.ToString(f.countT1);
-                    //textTotal2.Text = Convert.ToString(f.countT2);
-                }
-            }
-            else
-            {
-               
+                float[] intens = f.getIntensity();
+                for(var i = 0; i < f.getSize().Y-2; i++)
+                    richTextBox1.Text += Math.Round(intens[i],3).ToString() + "\t";
+                richTextBox1.Text += "\n";
             }
         }
 
@@ -144,21 +126,11 @@ namespace CanalizaedBelt
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            if (BasicRadio.Checked)
-            {
-                rbc = true;
-                f = null;
-                trackBar2.Maximum = (pictureBox1.Height / trackBar1.Value)*4;
-                trackBar2.Value = trackBar2.Maximum / 2;
-                particleLabel.Text = trackBar2.Value.ToString();
-            }
-            else
-            {
-                //rbc = false;
-                //f = null;
-                //trackBar1.Maximum = 40;
-                //trackBar1.Value = 20;
-            }
+            f = null;
+            trackBar2.Maximum = (pictureBox1.Height / trackBar1.Value)*4;
+            trackBar2.Value = trackBar2.Maximum / 2;
+            particleLabel.Text = trackBar2.Value.ToString();
+            this.Height = 504;
         }
 
         private void checkBox2_CheckedChanged(object sender, EventArgs e)
@@ -167,6 +139,51 @@ namespace CanalizaedBelt
                 timer1.Interval = 10;
             else
                 timer1.Interval = 100;
+        }
+
+        private void PauseButt_Click(object sender, EventArgs e)
+        {
+            if (timer1.Enabled)
+            {
+                timer1.Stop();
+                PauseButt.Text = "Продолжить";
+            }
+            else
+            {
+                timer1.Start();
+                PauseButt.Text = "Пауза";
+            }
+        }
+
+        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        {
+            int grid_step = trackBar1.Value;
+            int kX = pictureBox1.Width / grid_step;
+            int kY = pictureBox1.Height / grid_step;
+            if (checkBox1.Checked == true)
+            {
+                this.Height = 690;
+                groupBox5.Visible = true;
+                richTextBox1.Visible = true;
+                prepareStatisticField();
+            }
+            else
+            {
+                this.Height = 504;
+                groupBox5.Visible = false;
+                richTextBox1.Visible = false;
+            }
+        }
+
+        private void prepareStatisticField()
+        {
+            int grid_step = trackBar1.Value;
+            int kY = pictureBox1.Height / grid_step;
+            richTextBox1.Text = "";
+            richTextBox1.Text += "Интенсивность за период: 20 тиков таймера;\n";
+            for (var i = 1; i <= (kY - 2); i++)
+                richTextBox1.Text += i.ToString() + "\t";
+            richTextBox1.Text += "\n";
         }
     }
 }

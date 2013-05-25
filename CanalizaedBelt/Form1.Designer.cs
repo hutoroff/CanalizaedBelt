@@ -36,6 +36,7 @@
             this.StartButton = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.checkBox2 = new System.Windows.Forms.CheckBox();
             this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.particleLabel = new System.Windows.Forms.Label();
             this.fieldLabel = new System.Windows.Forms.Label();
@@ -49,7 +50,8 @@
             this.MixedRadio = new System.Windows.Forms.RadioButton();
             this.BasicRadio = new System.Windows.Forms.RadioButton();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.checkBox2 = new System.Windows.Forms.CheckBox();
+            this.groupBox5 = new System.Windows.Forms.GroupBox();
+            this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -57,6 +59,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.trackBar2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
             this.groupBox3.SuspendLayout();
+            this.groupBox5.SuspendLayout();
             this.SuspendLayout();
             // 
             // pictureBox1
@@ -140,6 +143,18 @@
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Настройки процесса";
             // 
+            // checkBox2
+            // 
+            this.checkBox2.AutoSize = true;
+            this.checkBox2.Location = new System.Drawing.Point(411, 86);
+            this.checkBox2.Name = "checkBox2";
+            this.checkBox2.Size = new System.Drawing.Size(75, 17);
+            this.checkBox2.TabIndex = 8;
+            this.checkBox2.Text = "Ускорить";
+            this.checkBox2.UseVisualStyleBackColor = true;
+            this.checkBox2.Visible = false;
+            this.checkBox2.CheckedChanged += new System.EventHandler(this.checkBox2_CheckedChanged);
+            // 
             // checkBox1
             // 
             this.checkBox1.AutoSize = true;
@@ -150,6 +165,7 @@
             this.checkBox1.Text = "Включить статистику";
             this.checkBox1.UseVisualStyleBackColor = true;
             this.checkBox1.Visible = false;
+            this.checkBox1.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
             // 
             // particleLabel
             // 
@@ -167,17 +183,18 @@
             this.fieldLabel.Name = "fieldLabel";
             this.fieldLabel.Size = new System.Drawing.Size(36, 13);
             this.fieldLabel.TabIndex = 5;
-            this.fieldLabel.Text = "90x30";
+            this.fieldLabel.Text = "90x20";
             // 
             // PauseButt
             // 
-            this.PauseButt.Location = new System.Drawing.Point(249, 86);
+            this.PauseButt.Location = new System.Drawing.Point(232, 86);
             this.PauseButt.Name = "PauseButt";
-            this.PauseButt.Size = new System.Drawing.Size(75, 23);
+            this.PauseButt.Size = new System.Drawing.Size(86, 23);
             this.PauseButt.TabIndex = 4;
             this.PauseButt.Text = "Пауза";
             this.PauseButt.UseVisualStyleBackColor = true;
             this.PauseButt.Visible = false;
+            this.PauseButt.Click += new System.EventHandler(this.PauseButt_Click);
             // 
             // label2
             // 
@@ -212,11 +229,11 @@
             // 
             this.trackBar1.Location = new System.Drawing.Point(6, 19);
             this.trackBar1.Maximum = 50;
-            this.trackBar1.Minimum = 10;
+            this.trackBar1.Minimum = 15;
             this.trackBar1.Name = "trackBar1";
             this.trackBar1.Size = new System.Drawing.Size(243, 45);
             this.trackBar1.TabIndex = 0;
-            this.trackBar1.Value = 10;
+            this.trackBar1.Value = 15;
             this.trackBar1.Scroll += new System.EventHandler(this.trackBar1_Scroll);
             // 
             // groupBox3
@@ -269,26 +286,38 @@
             // 
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
-            // checkBox2
+            // groupBox5
             // 
-            this.checkBox2.AutoSize = true;
-            this.checkBox2.Location = new System.Drawing.Point(411, 86);
-            this.checkBox2.Name = "checkBox2";
-            this.checkBox2.Size = new System.Drawing.Size(75, 17);
-            this.checkBox2.TabIndex = 8;
-            this.checkBox2.Text = "Ускорить";
-            this.checkBox2.UseVisualStyleBackColor = true;
-            this.checkBox2.Visible = false;
-            this.checkBox2.CheckedChanged += new System.EventHandler(this.checkBox2_CheckedChanged);
+            this.groupBox5.Controls.Add(this.richTextBox1);
+            this.groupBox5.Location = new System.Drawing.Point(13, 466);
+            this.groupBox5.Name = "groupBox5";
+            this.groupBox5.Size = new System.Drawing.Size(900, 174);
+            this.groupBox5.TabIndex = 3;
+            this.groupBox5.TabStop = false;
+            this.groupBox5.Text = "Интенсивность";
+            this.groupBox5.Visible = false;
+            // 
+            // richTextBox1
+            // 
+            this.richTextBox1.Cursor = System.Windows.Forms.Cursors.Default;
+            this.richTextBox1.Location = new System.Drawing.Point(6, 19);
+            this.richTextBox1.Name = "richTextBox1";
+            this.richTextBox1.ReadOnly = true;
+            this.richTextBox1.Size = new System.Drawing.Size(888, 149);
+            this.richTextBox1.TabIndex = 1;
+            this.richTextBox1.Text = "";
+            this.richTextBox1.Visible = false;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(925, 525);
+            this.ClientSize = new System.Drawing.Size(925, 652);
+            this.Controls.Add(this.groupBox5);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.pictureBox1);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "Form1";
@@ -303,6 +332,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).EndInit();
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
+            this.groupBox5.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -330,6 +360,8 @@
         private System.Windows.Forms.Timer timer1;
         private System.Windows.Forms.CheckBox checkBox1;
         private System.Windows.Forms.CheckBox checkBox2;
+        private System.Windows.Forms.GroupBox groupBox5;
+        private System.Windows.Forms.RichTextBox richTextBox1;
     }
 }
 

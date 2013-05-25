@@ -8,16 +8,18 @@ namespace CanalizaedBelt
 {
     class Field
     {
-        int grid_step;
-        List<Paricle> Paricle;
-        int kX;
-        int kY;
-        int amnt;
-        int[,] wall;
-        Random rand = new Random();
+        int grid_step;                  //шаг сетки;
+        List<Paricle> Paricle;          //список частиц;
+        int kX;                         //размер поля по X
+        int kY;                         //размер поля по Y
+        int amnt;                       //количество частиц на поле;
+        int[,] wall;                    //границы стен;
+        int[] counter;                  //количество частиц прошедших в ряду за единицу времени (20 тактов);
+        float[] intens;                 //интенсивности для рядов       
+        int ticker;                     //счетчик тиков таймера для контроля за единицей времени;
+        Random rand = new Random();     //генератор случайных чисел;
         
-        int task = -1;  //0 - однотипные частицы; 1 - смешанные частицы; 2 - смешанные с обгоном; -1 - ошибка
-        //public int countC1, countL1, countT1, countC2, countL2, countT2;
+        int task = -1;  //0 - однотипные частицы; 1 - смешанные частицы; 2 - смешанные с обгоном; -1 - ошибка;
 
         public Field(int _w, int _h, int _g, int _amnt, int _task)
         {
@@ -25,17 +27,24 @@ namespace CanalizaedBelt
             kX = _w / _g;
             kY = _h / _g;
             amnt = _amnt;
+            ticker = 0;
             Paricle = new List<Paricle>();
             wall = new int[kX, kY];
+            intens = new float[kY-2];
+            counter = new int[kY-2];
             task = _task;
             float per;
             if (task == 0)
                 per = 0.3f;
             else
                 per = 2;
-            //countC1 = countL1 = countT1 = countC2 = countL2 = countT2 = 0;
 
+            for(int i = 0; i < kY-2; i++)
+                counter[i] = 0;
 
+            for (int i = 0; i < kY-2; i++)
+                intens[i] = 0;
+            
             for (var i = 0; i < amnt; ++i)
             {
                 Paricle part;
@@ -66,7 +75,7 @@ namespace CanalizaedBelt
             {
                 if (task == 2 && p.type == 1)
                 {
-                    if(rand.NextDouble()>=0.75)
+                    if(rand.NextDouble() >= 0.75)     //смещение по Y с вероятностью 25%
                         v.Y = v.Y + Convert.ToInt32(Math.Pow(-1, rand.Next(1, 3)));
                 }
                 if (feelWall(v))
@@ -75,6 +84,9 @@ namespace CanalizaedBelt
             }
             if (feelEnd(v))
                 v.X = 0;
+
+            if (oldV.X < kX/2 && v.X >= kX / 2 && v.Y != 0 && v.Y != kY)
+                counter[v.Y-1]++;
 
             return v;
         }
@@ -101,13 +113,6 @@ namespace CanalizaedBelt
         }
         public void Move()
         {
-            //countL1 = countC1;
-            //countT1 += countC1;
-            //countC1 = 0;
-
-
-            //countT2 = countC2 + countL2;
-
             foreach (var t in Paricle)
             {
                 Point v = NextPos(t);
@@ -120,6 +125,21 @@ namespace CanalizaedBelt
                 if (!f) continue;
                 t.X = (int)v.X;
                 t.Y = (int)v.Y;
+            }
+
+            if(ticker == 19)
+            {
+                ticker = 0;
+                for (var i = 0; i < kY - 2; i++)
+                    counter[i] = 0;
+                for (var i = 0; i < kY - 2; i++)
+                    intens[i] = 0;
+            }
+            ticker++;
+            if(ticker==19)
+            {
+                for (var i = 0; i < kY-2; i++)
+                    intens[i] = intensity(counter[i], kY - 2);
             }
         }
 
@@ -146,6 +166,46 @@ namespace CanalizaedBelt
                 }
 
             }
+        }
+
+        public Point getSize()
+        {
+            Point tmp = new Point(kX,kY);
+            return tmp;
+        }
+
+        public Point getSizeInSquares()
+        {
+            Point tmp = new Point(kX*grid_step, kY*grid_step);
+            return tmp;
+        }
+
+        private float M(int[] x, int size)
+        {
+            float M=0;
+            for(int i=0; i < size; i++)
+                M+=x[i];
+            return M/size;
+        }
+
+        private float intensity(float M, int size)
+        {
+            return M / 20;
+        }
+
+        private float intensity(int[] x, int size)
+        {
+            return M(x, size) / 20;
+        }
+
+        public float[] getIntensity()
+        {
+            return intens;
+        }
+
+        public int getTicker()
+        {
+            return ticker;
         }
     }
 }
