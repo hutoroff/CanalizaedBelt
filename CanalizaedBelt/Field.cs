@@ -188,9 +188,14 @@ namespace CanalizaedBelt
             return M/size;
         }
 
-        private float intensity(float M, int size)
+        private float M(float x, int size)
         {
-            return M / 20;
+            return x / size;
+        }
+
+        private float intensity(float x, int size)
+        {
+            return M(x,20) / 20;
         }
 
         private float intensity(int[] x, int size)
