@@ -117,7 +117,7 @@ namespace CanalizaedBelt
             }
 
             //отрисовка границ третей
-            Brush b = new SolidBrush(Color.Fuchsia);
+            Brush b = new SolidBrush(Color.ForestGreen);
             Pen p = new Pen(b, 7);
             e.Graphics.DrawLine(p, (kX / 2) * grid_step, 0, (kX / 2) * grid_step, pictureBox1.Height);
 

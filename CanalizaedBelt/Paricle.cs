@@ -36,9 +36,9 @@ namespace CanalizaedBelt
             isCnt1 = isCnt2 = false;
         }
 
-        public bool Go()
+        public bool Go(Random rand)
         {
-            var rand = new Random();
+            //var rand = new Random();
             var m = (float)rand.NextDouble();
             return p >= m;
         }

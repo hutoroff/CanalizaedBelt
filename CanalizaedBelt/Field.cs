@@ -71,7 +71,7 @@ namespace CanalizaedBelt
             var v = new Point(p.X, p.Y);
             
             var oldV = new Point(p.X, p.Y);
-            if (p.Go())
+            if (p.Go(rand))
             {
                 if (task == 2 && p.type == 1)
                 {
@@ -149,9 +149,9 @@ namespace CanalizaedBelt
             {
                 Brush b;
                 if(p.type == 0)
-                    b = new SolidBrush(Color.Blue);
+                    b = new SolidBrush(Color.Magenta);
                 else
-                    b = new SolidBrush(Color.Red);
+                    b = new SolidBrush(Color.Blue);
                 g.FillEllipse(b, p.X * grid_step + 2, p.Y * grid_step + 2, grid_step - 5, grid_step - 5);
 
             }
